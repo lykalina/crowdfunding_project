@@ -1,0 +1,72 @@
+.mainLayout {
+    padding: 35px 100px 0 100px;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 40px;
+    font-size: 24px;
+}
+
+.nav {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--font-menu);
+    position: relative;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.nav-link:hover {
+    color: var(--font-active);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: var(--bg-accent);
+    border-radius: 3px 3px 0 0;
+}
+
+.active {
+    color: var(--font-active);
+}
+
+.cart {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--font-primary);
+    color: var(--font-active);
+    font-weight: 500;
+    font-size: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+    flex-shrink: 0;
+}
