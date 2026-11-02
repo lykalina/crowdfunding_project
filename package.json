@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/lykalina/crowdfunding_project#readme",
   "dependencies": {
+    "@mr-igorinni/react-yandex-maps-fork": "^1.2.6-react19",
     "@reduxjs/toolkit": "^2.13.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

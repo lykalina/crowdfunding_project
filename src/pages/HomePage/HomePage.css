@@ -1,18 +1,22 @@
-.heroBlock {
-    background-color: var(--bg-secondary);
+.contentBlock {
     padding: 231px 100px 129px 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.heroBlock__title {
+.heroBlock {
+    background-color: var(--bg-secondary);
+}
+
+.block__title {
     max-width: 1076px;
     margin-bottom: 80px;
     color: var(--font-primary);
+    text-align: center;
 }
 
-.heroBlock__button {
+.contentBlock__button {
     padding: 15px 30px;
     background-color: var(--bg-accent);
     border-radius: 10px;
@@ -22,7 +26,7 @@
     font-size: 18px;
 }
 
-.heroBlock__button:hover {
+.contentBlock__button:hover {
     border-color: var(--bg-border);
 }
 
@@ -59,4 +63,59 @@
     background-color: var(--font-secondary);
     border-radius: 10px;
     font-size: 24px;
+}
+
+.inputBlock {
+    display: flex;
+    height: 71px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 18px;
+    background-color: var(--bg-block);
+    margin: 50px 0 58px 0;
+    max-width: 900px;
+    width: 100%;
+}
+
+.inputText {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    font-size: 16px;
+    width: 100%;
+}
+
+.smallButton {
+    font-size: 16px;
+}
+
+.locationsBlock .block__title {
+    margin-bottom: 0;
+}
+
+.mapBlock {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 74px;
+    flex-wrap: wrap;
+}
+
+.mapResults {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    background-color: var(--bg-block);
+    min-width: 300px;
+    height: 400px;
+}
+
+.map {
+    overflow: hidden;
+    min-width: 300px;
+    flex: 1;
+    max-width: 678px;
+    height: 400px;
 }
