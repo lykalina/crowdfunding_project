@@ -1,12 +1,15 @@
-.mainLayout {
-    padding: 35px 100px 0 100px;
-}
-
 .header {
     display: flex;
     justify-content: flex-end;
     gap: 40px;
     font-size: 24px;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    width: 100%;
+    height: 115px;
+    align-items: center;
+    padding-right: 100px;
 }
 
 .nav {
@@ -20,6 +23,7 @@
     position: relative;
     padding-bottom: 10px;
     display: inline-block;
+    height: 46px;
 }
 
 .nav-link:hover {
@@ -41,9 +45,7 @@
     color: var(--font-active);
 }
 
-.cart {
-    display: flex;
-    align-items: center;
+.cart, .user {
     cursor: pointer;
 }
 
@@ -51,7 +53,6 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    cursor: pointer;
 }
 
 .avatar {

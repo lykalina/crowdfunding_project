@@ -33,6 +33,10 @@ module.exports = {
                     filename: 'fonts/[name][ext]',
                 },
             },
+            {
+                test: /\.(png|jpe?g|gif|svg|webp)$/i,
+                type: 'asset/resource',
+            },
         ],
     },
     resolve: {
