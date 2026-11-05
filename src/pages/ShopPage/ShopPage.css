@@ -1,0 +1,113 @@
+.shop-page {
+    padding: 231px 100px 129px 100px;
+}
+
+.shop-page__invest {
+    height: 90px;
+}
+
+.shop-page__invest-text {
+    position: relative;
+    padding-bottom: 10px;
+    display: inline-block;
+    height: 46px;
+    width: 110px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.shop-page__invest-text::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: var(--bg-accent);
+    border-radius: 3px 3px 0 0;
+}
+
+.shop-page__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.shop-page__item {
+    border-radius: 15px;
+    background-color: var(--bg-block);
+    overflow: hidden;
+}
+
+.shop-page__item-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.shop-page__item-img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.shop-page__item-content {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+@media (max-width: 1200px) {
+    .shop-page__list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .shop-page__list {
+        grid-template-columns: 1fr;
+    }
+
+    .shop-page {
+        padding: 120px 24px 60px 24px;
+    }
+
+    .shop-page__item-img {
+        height: 280px;
+    }
+}
+
+.shop-page__item-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.shop-page__item-controls-invest {
+    background-color: transparent;
+    padding: 15px 30px;
+    border-radius: 10px;
+    color: var(--font-active);
+    width: 148px;
+    border: 2px solid var(--bg-accent);
+    font-size: 18px;
+}
+
+.shop-page__item-controls-invest:hover {
+    background-color: var(--bg-accent);
+    color: var(--font-secondary);
+}
+
+.shop-page__item-controls-reserve {
+    background-color: transparent;
+    padding: 15px 30px;
+    color: var(--bg-accent);
+    width: 148px;
+    font-size: 18px;
+}

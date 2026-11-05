@@ -1,11 +1,11 @@
-
 import './HomePage.css';
 import img1 from '../../assets/images/1.webp';
 import img2 from '../../assets/images/2.webp';
 import img3 from '../../assets/images/3.webp';
 import SearchIcon from '../../components/icons/SeachIcon';
-import { YMaps, Map } from '@mr-igorinni/react-yandex-maps-fork';
+import { YMaps, Map, Placemark } from '@mr-igorinni/react-yandex-maps-fork';
 import { useHomePageViewModel } from './useHomePageViewModel';
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
     const {
@@ -22,7 +22,9 @@ export default function HomePage() {
         setIsDropdownOpen,
         handleSearch,
         selectLocation,
-        ranches
+        ranches,
+        handleBoundsChange,
+        handleMapLoad,
     } = useHomePageViewModel();
 
     return (
@@ -181,11 +183,13 @@ export default function HomePage() {
                                                         {ranch.country}
                                                     </p>
                                                 </div>
-                                                <button
-                                                    className="home-page__results-button"
-                                                >
-                                                    Shop
-                                                </button>
+                                                <Link to={`/shop?ranchId=${ranch.id}`}>
+                                                    <button
+                                                        className="home-page__results-button"
+                                                    >
+                                                        Shop
+                                                    </button>
+                                                </Link>
                                             </div>
                                         </li>
                                     ))}
@@ -198,16 +202,26 @@ export default function HomePage() {
                                 instanceRef={(map) => {
                                     mapRef.current = map;
                                 }}
-                                onLoad={(ymaps) => {
-                                    ymapsRef.current = ymaps;
-                                }}
+                                onLoad={handleMapLoad}
+                                onBoundsChange={handleBoundsChange}
+                                modules={['util.bounds']}
                                 defaultState={{
                                     center: [55.751574, 37.573856],
                                     zoom: 9
                                 }}
                                 width="100%"
                                 height="681px"
-                            />
+                            >
+                                {ranches.map((ranch) => (
+                                    <Placemark
+                                        key={ranch.id}
+                                        geometry={[ranch.coordinates.lat, ranch.coordinates.lng]}
+                                        properties={{
+                                            iconCaption: ranch.name,
+                                        }}
+                                    />
+                                ))}
+                            </Map>
                         </div>
                     </div>
                 </div>

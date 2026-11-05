@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGetRanchesQuery } from '../../services/ranchesApi';
 
@@ -21,17 +20,62 @@ export function useHomePageViewModel() {
     const [searchError, setSearchError] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    useEffect(() => {
-        /*
-        if (data) {
-            console.log('Products:', data);
+    const [visibleRanches, setVisibleRanches] = useState([]);
+
+    const allRanches = data?.ranches ?? [];
+
+    const filterRanchesByBounds = useCallback(() => {
+        const map = mapRef.current;
+        const ymaps = ymapsRef.current;
+
+        if (!map || !ymaps || allRanches.length === 0) {
+            setVisibleRanches(allRanches);
+            return;
         }
-         */
+
+        try {
+            const bounds = map.getBounds();
+            if (!bounds) {
+                setVisibleRanches(allRanches);
+                return;
+            }
+
+            const filtered = allRanches.filter((ranch) => {
+                const point = [ranch.coordinates.lat, ranch.coordinates.lng];
+                return ymaps.util.bounds.containsPoint(bounds, point);
+            });
+
+            setVisibleRanches(filtered);
+        } catch (err) {
+            console.error('Bounds filtering error:', err);
+            setVisibleRanches(allRanches);
+        }
+    }, [allRanches]);
+
+    useEffect(() => {
+        if (allRanches.length > 0 && mapRef.current) {
+            filterRanchesByBounds();
+        }
+    }, [allRanches, filterRanchesByBounds]);
+
+    const handleBoundsChange = useCallback(() => {
+        filterRanchesByBounds();
+    }, [filterRanchesByBounds]);
+
+    const handleMapLoad = useCallback((ymaps) => {
+        ymapsRef.current = ymaps;
+        filterRanchesByBounds();
+    }, [filterRanchesByBounds]);
+
+    useEffect(() => {
+        if (data) {
+            console.log('Ranches:', data);
+        }
     }, [data]);
 
     useEffect(() => {
         if (isError) {
-            console.error('Products error:', error);
+            console.error('Ranches error:', error);
         }
     }, [isError, error]);
 
@@ -144,7 +188,8 @@ export function useHomePageViewModel() {
 
     return {
         scrollToLocations,
-        ranches: data?.ranches ?? [],
+        ranches: visibleRanches,
+        allRanches,
         mapRef,
         ymapsRef,
         searchWrapperRef,
@@ -160,5 +205,7 @@ export function useHomePageViewModel() {
         setIsDropdownOpen,
         handleSearch,
         selectLocation,
+        handleBoundsChange,
+        handleMapLoad,
     };
 }
