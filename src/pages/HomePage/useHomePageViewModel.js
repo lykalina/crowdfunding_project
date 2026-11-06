@@ -68,12 +68,6 @@ export function useHomePageViewModel() {
     }, [filterRanchesByBounds]);
 
     useEffect(() => {
-        if (data) {
-            console.log('Ranches:', data);
-        }
-    }, [data]);
-
-    useEffect(() => {
         if (isError) {
             console.error('Ranches error:', error);
         }
