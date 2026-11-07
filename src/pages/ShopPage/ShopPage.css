@@ -387,6 +387,11 @@
 @media (max-width: 768px) {
     .shop-page__content {
         flex-direction: column;
+        align-items: center;
+    }
+
+    .shop-page__list {
+        width: 100%;
     }
 
     .shop-page__map {

@@ -4,6 +4,7 @@ import ArrowIcon from '../../components/icons/ArrowIcon';
 import FilterIcon from '../../components/icons/FilterIcon';
 import MapIcon from '../../components/icons/MapIcon';
 import { YMaps, Map, Placemark } from '@mr-igorinni/react-yandex-maps-fork';
+import { useCart } from '../../components/CartComponent/useCart';
 
 export default function ShopPage() {
     const {
@@ -26,6 +27,8 @@ export default function ShopPage() {
         isMapOpen,
         toggleMap,
     } = useShopPageViewModel();
+
+    const { addInvest, addReserve } = useCart();
 
     return (
         <div className="shop-page">
@@ -236,10 +239,16 @@ export default function ShopPage() {
                                     <p>Size: {field.sizeSqm}</p>
                                     <p>Guide Price: ${field.guidePrice}</p>
                                     <div className="shop-page__item-controls">
-                                        <button className="shop-page__item-controls-invest">
+                                        <button
+                                            className="shop-page__item-controls-invest"
+                                            onClick={() => addInvest(field)}
+                                        >
                                             Invest
                                         </button>
-                                        <button className="shop-page__item-controls-reserve">
+                                        <button
+                                            className="shop-page__item-controls-reserve"
+                                            onClick={() => addReserve(field)}
+                                        >
                                             Reserve
                                         </button>
                                     </div>

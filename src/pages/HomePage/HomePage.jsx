@@ -210,7 +210,7 @@ export default function HomePage() {
                                     zoom: 9
                                 }}
                                 width="100%"
-                                height="681px"
+                                height="100%"
                             >
                                 {ranches.map((ranch) => (
                                     <Placemark
