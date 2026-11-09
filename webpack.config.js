@@ -1,3 +1,6 @@
+const webpack = require('webpack');
+require('dotenv').config();
+
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -33,6 +36,10 @@ module.exports = {
                     filename: 'fonts/[name][ext]',
                 },
             },
+            {
+                test: /\.(png|jpe?g|gif|svg|webp)$/i,
+                type: 'asset/resource',
+            },
         ],
     },
     resolve: {
@@ -41,6 +48,14 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './public/index.html',
+        }),
+        new webpack.DefinePlugin({
+            'process.env.YANDEX_MAPS_API_KEY': JSON.stringify(
+                process.env.YANDEX_MAPS_API_KEY
+            ),
+            'process.env.YANDEX_GEOCODER_API_KEY': JSON.stringify(
+                process.env.YANDEX_GEOCODER_API_KEY
+            ),
         }),
     ],
 };

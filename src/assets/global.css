@@ -1,0 +1,76 @@
+@font-face {
+    font-family: 'DM Sans';
+    src: url('./fonts/DMSans-VariableFont_opsz,wght.ttf') format('ttf');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DM Serif Text';
+    src: url('./fonts/DMSerifText-Regular.ttf') format(truetype);
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --font-active: #222222;
+    --font-menu: #8B8B8B;
+
+    --font-primary: #353640;
+    --font-secondary: #FFFFFF;
+    --font-sub: #474747;
+
+    --bg-accent: #68D017;
+    --bg-secondary: #F0FEE2;
+    --bg-border: #000000;
+    --bg-block: #EAEAEA;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+}
+
+h2 {
+    font-family: 'DM Serif Text', sans-serif;
+    font-size: 64px;
+    text-align: center;
+    font-weight: 400;
+}
+
+p, span, button, input, textarea, a {
+    font-weight: 400;
+}
+
+button {
+    font: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+input {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    min-width: 0;
+    flex: 1;
+}
+
+input::placeholder {
+    color: inherit;
+    opacity: 0.6;
+}
