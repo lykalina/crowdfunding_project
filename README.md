@@ -3,7 +3,7 @@
 Платформа для аренды земельных участков с возможностью инвестировать или резервировать поля.
 
 ## Netify
-https://sparkling-kitten-97f253.netlify.app/
+https://sparkling-kitten-97f253.netlify.app/ (впн)
 
 ## Стек
 
