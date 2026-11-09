@@ -227,6 +227,7 @@
 
     .home-page__title {
         margin-bottom: 40px;
+        font-size: 32px;
     }
 
     .home-page__cards {
@@ -268,6 +269,7 @@
         width: 100%;
         max-width: none;
         height: 300px;
+        flex: none;
     }
 
     .home-page__map-results {
