@@ -1,15 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useGetRanchesQuery } from '../../services/ranchesApi';
 
-export default function useMyPlotsPageModel() {
-    const {
-        data,
-        isLoading,
-        isError,
-        error,
-    } = useGetRanchesQuery();
-
-    const mapRef = useRef(null);
+export function useLocationSearch({ onLocationSelect }) {
     const searchWrapperRef = useRef(null);
     const debounceTimerRef = useRef(null);
     const skipNextSearchRef = useRef(false);
@@ -20,48 +11,6 @@ export default function useMyPlotsPageModel() {
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    const [activeRanchId, setActiveRanchId] = useState(null);
-
-    const allRanches = data?.ranches ?? [];
-
-    const centerOnRanch = useCallback((ranch) => {
-        if (!mapRef.current || !ranch) return;
-
-        mapRef.current.setCenter(
-            [ranch.coordinates.lat, ranch.coordinates.lng],
-            12,
-            { duration: 500 }
-        );
-    }, []);
-
-    useEffect(() => {
-        if (allRanches.length === 0) return;
-        if (!mapRef.current) return;
-
-        const firstRanch = allRanches[0];
-        setActiveRanchId(firstRanch.id);
-        centerOnRanch(firstRanch);
-    }, [allRanches, centerOnRanch]);
-
-    const handleMapLoad = useCallback(() => {
-        if (allRanches.length > 0) {
-            const firstRanch = allRanches[0];
-            setActiveRanchId(firstRanch.id);
-            centerOnRanch(firstRanch);
-        }
-    }, [allRanches, centerOnRanch]);
-
-    const selectRanchFromList = useCallback((ranch) => {
-        setActiveRanchId(ranch.id);
-        centerOnRanch(ranch);
-    }, [centerOnRanch]);
-
-    useEffect(() => {
-        if (isError) {
-            console.error('Ranches error:', error);
-        }
-    }, [isError, error]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -191,12 +140,8 @@ export default function useMyPlotsPageModel() {
         setSearchError(null);
         setIsDropdownOpen(false);
 
-        if (mapRef.current) {
-            mapRef.current.setCenter(
-                [location.latitude, location.longitude],
-                9,
-                { duration: 500 }
-            );
+        if (onLocationSelect) {
+            onLocationSelect(location);
         }
     };
 
@@ -215,13 +160,7 @@ export default function useMyPlotsPageModel() {
     }, []);
 
     return {
-        ranches: allRanches,
-        allRanches,
-        activeRanchId,
-        mapRef,
         searchWrapperRef,
-        isLoading,
-        isError,
         searchQuery,
         setSearchQuery,
         searchResults,
@@ -233,7 +172,5 @@ export default function useMyPlotsPageModel() {
         handleSearch,
         selectLocation,
         clearSearch,
-        handleMapLoad,
-        selectRanchFromList,
     };
 }

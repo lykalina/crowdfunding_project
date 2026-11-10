@@ -1,12 +1,23 @@
 import './MyPlotsPage.css';
 import { YMaps, Map, Placemark } from '@mr-igorinni/react-yandex-maps-fork';
 import { Link } from 'react-router-dom';
-import SearchIcon from '../../components/icons/SeachIcon';
-import useMyPlotsPageModel from './useMyPlotsPageModel';
+import SearchIcon from '../../shared/components/icons/SeachIcon';
+import { useRanches } from '../../shared/hooks/useRanches';
+import { useRanchMap } from '../../shared/hooks/useRanchMap';
+import { useLocationSearch } from '../../shared/hooks/useLocationSearch';
 
 export default function MyPlotsPage() {
+    const { allRanches, isLoading, isError } = useRanches();
+
     const {
         mapRef,
+        activeRanchId,
+        handleMapLoad,
+        selectRanchFromList,
+        centerOnCoords,
+    } = useRanchMap(allRanches);
+
+    const {
         searchWrapperRef,
         searchQuery,
         setSearchQuery,
@@ -18,11 +29,11 @@ export default function MyPlotsPage() {
         handleSearch,
         selectLocation,
         clearSearch,
-        ranches,
-        activeRanchId,
-        handleMapLoad,
-        selectRanchFromList,
-    } = useMyPlotsPageModel();
+    } = useLocationSearch({
+        onLocationSelect: (location) => {
+            centerOnCoords(location.latitude, location.longitude, 9);
+        },
+    });
 
     return (
         <YMaps
@@ -106,13 +117,13 @@ export default function MyPlotsPage() {
 
                 <div className="plots-page__map-block">
                     <div className="plots-page__map-results">
-                        {ranches.length === 0 ? (
+                        {allRanches.length === 0 ? (
                             <p className="plots-page__map-empty">
                                 0 results
                             </p>
                         ) : (
                             <ul className="plots-page__results-list">
-                                {ranches.map((ranch) => (
+                                {allRanches.map((ranch) => (
                                     <li
                                         className={
                                             ranch.id === activeRanchId
@@ -169,7 +180,7 @@ export default function MyPlotsPage() {
                             width="100%"
                             height="100%"
                         >
-                            {ranches.map((ranch) => (
+                            {allRanches.map((ranch) => (
                                 <Placemark
                                     key={ranch.id}
                                     geometry={[ranch.coordinates.lat, ranch.coordinates.lng]}

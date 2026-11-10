@@ -1,8 +1,12 @@
 import './MainLayout.css';
 import { Outlet, NavLink } from 'react-router-dom';
-import CartIcon from '../components/icons/CartIcon';
-import ArrowIcon from '../components/icons/ArrowIcon';
-import { useMainLayoutViewModel } from './useMainLayoutViewModel';
+import CartIcon from '../shared/components/icons/CartIcon';
+import ArrowIcon from '../shared/components/icons/ArrowIcon';
+import { useCartState } from '../shared/hooks/useCartState';
+import { useCurrentUser } from '../shared/hooks/useCurrentUser';
+import { useDropdown } from '../shared/hooks/useDropdown';
+import { useMenuState } from '../shared/hooks/useMenuState';
+import { useHeaderClass } from '../shared/hooks/useHeaderClass';
 
 export default function MainLayout() {
     const {
@@ -14,18 +18,25 @@ export default function MainLayout() {
         investTotal,
         reserveTotal,
         totalPrice,
-        user,
-        isCartOpen,
-        isMenuOpen,
-        isUserOpen,
-        toggleCart,
-        toggleMenu,
-        toggleUser,
-        closeMenu,
-        cartWrapperRef,
-        userWrapperRef,
-        headerClass,
-    } = useMainLayoutViewModel();
+    } = useCartState();
+
+    const { user } = useCurrentUser();
+
+    const {
+        isOpen: isCartOpen,
+        toggle: toggleCart,
+        wrapperRef: cartWrapperRef,
+    } = useDropdown();
+
+    const {
+        isOpen: isUserOpen,
+        toggle: toggleUser,
+        wrapperRef: userWrapperRef,
+    } = useDropdown();
+
+    const { isMenuOpen, toggleMenu, closeMenu } = useMenuState();
+
+    const headerClass = useHeaderClass();
 
     return (
         <div className="mainLayout">

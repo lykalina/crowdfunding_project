@@ -1,37 +1,73 @@
-import { useShopPageViewModel } from './useShopPageViewModel';
 import './ShopPage.css';
-import ArrowIcon from '../../components/icons/ArrowIcon';
-import FilterIcon from '../../components/icons/FilterIcon';
-import MapIcon from '../../components/icons/MapIcon';
+import ArrowIcon from '../../shared/components/icons/ArrowIcon';
+import FilterIcon from '../../shared/components/icons/FilterIcon';
+import MapIcon from '../../shared/components/icons/MapIcon';
 import { YMaps, Map, Placemark } from '@mr-igorinni/react-yandex-maps-fork';
-import { useCart } from '../../components/CartComponent/useCart';
+import { useCart } from '../../shared/slices/useCart';
+import { useDropdown } from '../../shared/hooks/useDropdown';
+import { useShopData } from '../../shared/hooks/useShopData';
+import { useShopFilters } from '../../shared/hooks/useShopFilters';
+import { useShopFields } from '../../shared/hooks/useShopFields';
+import { useShopPagination } from '../../shared/hooks/useShopPagination';
+import { useShopMap } from '../../shared/hooks/useShopMap';
 
 export default function ShopPage() {
+    const { allRanches } = useShopData();
+
     const {
-        visibleFields,
-        hasMore,
-        showMore,
         ranchId,
-        allRanches,
-        countries,
-        sortFilter,
-        isSortOpen,
-        toggleSort,
-        selectRanch,
-        sortWrapperRef,
-        isFilterOpen,
-        toggleFilter,
-        filterWrapperRef,
+        filterCountry,
+        filterMinPrice,
+        filterMaxPrice,
+        filterMinSize,
+        filterMaxSize,
         draftFilters,
         setDraftFilter,
         applyFilters,
         resetFilters,
+        selectRanch,
+        hasActiveFilters,
+    } = useShopFilters();
+
+    const { fields, countries, ranch } = useShopFields({
+        allRanches,
+        ranchId,
+        filterCountry,
+        filterMinPrice,
+        filterMaxPrice,
+        filterMinSize,
+        filterMaxSize,
+    });
+
+    const resetKey = `${ranchId ?? ''}-${filterCountry}-${filterMinPrice}-${filterMaxPrice}-${filterMinSize}-${filterMaxSize}`;
+
+    const { visibleFields, hasMore, showMore } = useShopPagination({
+        fields,
+        resetKey,
+    });
+
+    const {
+        mapRef,
         isMapOpen,
         toggleMap,
         activeFieldId,
         selectFieldFromList,
         handleInstanceRef,
-    } = useShopPageViewModel();
+    } = useShopMap({ fields });
+
+    const {
+        isOpen: isSortOpen,
+        toggle: toggleSort,
+        close: closeSort,
+        wrapperRef: sortWrapperRef,
+    } = useDropdown();
+
+    const {
+        isOpen: isFilterOpen,
+        toggle: toggleFilter,
+        close: closeFilter,
+        wrapperRef: filterWrapperRef,
+    } = useDropdown();
 
     const {
         addInvest,
@@ -42,6 +78,21 @@ export default function ShopPage() {
         getInvestQuantity,
         isReserved,
     } = useCart();
+
+    const handleSelectRanch = (id) => {
+        selectRanch(id);
+        closeSort();
+    };
+
+    const handleApplyFilters = () => {
+        applyFilters();
+        closeFilter();
+    };
+
+    const handleResetFilters = () => {
+        resetFilters();
+        closeFilter();
+    };
 
     return (
         <div className="shop-page">
@@ -62,7 +113,7 @@ export default function ShopPage() {
                             aria-expanded={isSortOpen}
                         >
                             <p>
-                                Sort by <span>{sortFilter}</span>
+                                Sort by <span>{ranch?.name ?? 'All'}</span>
                             </p>
                             <ArrowIcon
                                 className={
@@ -82,7 +133,7 @@ export default function ShopPage() {
                                             ? 'shop-page__dropdown-item shop-page__dropdown-item--active'
                                             : 'shop-page__dropdown-item'
                                     }
-                                    onClick={() => selectRanch(null)}
+                                    onClick={() => handleSelectRanch(null)}
                                 >
                                     <span>All</span>
                                     <small>All ranches</small>
@@ -97,7 +148,7 @@ export default function ShopPage() {
                                                 ? 'shop-page__dropdown-item shop-page__dropdown-item--active'
                                                 : 'shop-page__dropdown-item'
                                         }
-                                        onClick={() => selectRanch(r.id)}
+                                        onClick={() => handleSelectRanch(r.id)}
                                     >
                                         <span>{r.name}</span>
                                         <small>{r.country}</small>
@@ -201,14 +252,14 @@ export default function ShopPage() {
                                     <button
                                         type="button"
                                         className="shop-page__filter-apply"
-                                        onClick={applyFilters}
+                                        onClick={handleApplyFilters}
                                     >
                                         Show
                                     </button>
                                     <button
                                         type="button"
                                         className="shop-page__filter-reset"
-                                        onClick={resetFilters}
+                                        onClick={handleResetFilters}
                                     >
                                         Reset
                                     </button>

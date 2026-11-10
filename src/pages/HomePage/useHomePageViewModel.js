@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useGetRanchesQuery } from '../../services/ranchesApi';
 import img1 from '../../assets/images/1.webp';
 import img2 from '../../assets/images/2.webp';
 import img3 from '../../assets/images/3.webp';

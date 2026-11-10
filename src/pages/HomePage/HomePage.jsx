@@ -1,7 +1,7 @@
 import './HomePage.css';
 import { useHomePageViewModel } from './useHomePageViewModel';
 import { Link } from "react-router-dom";
-import ImageBoxComponent from "../../components/ImageBoxComponent/ImageBoxComponent";
+import ImageBoxComponent from "../../shared/components/ImageBoxComponent/ImageBoxComponent";
 
 export default function HomePage() {
     const {
