@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useGetRanchesQuery } from '../../services/ranchesApi';
 
+const PAGE_SIZE = 6;
+
 export function useShopPageViewModel() {
     const [searchParams, setSearchParams] = useSearchParams();
     const ranchId = searchParams.get('ranchId');
@@ -26,6 +28,7 @@ export function useShopPageViewModel() {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [activeFieldId, setActiveFieldId] = useState(null);
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const sortWrapperRef = useRef(null);
     const filterWrapperRef = useRef(null);
 
@@ -202,6 +205,29 @@ export function useShopPageViewModel() {
         return allRanches.find((r) => r.id === Number(ranchId)) ?? null;
     }, [allRanches, ranchId]);
 
+    const visibleFields = useMemo(
+        () => fields.slice(0, visibleCount),
+        [fields, visibleCount]
+    );
+
+    const hasMore = visibleCount < fields.length;
+
+    const showMore = useCallback(() => {
+        setVisibleCount((prev) => prev + PAGE_SIZE);
+    }, []);
+
+    useEffect(() => {
+        setVisibleCount(PAGE_SIZE);
+        setActiveFieldId(null);
+    }, [
+        ranchId,
+        filterCountry,
+        filterMinPrice,
+        filterMaxPrice,
+        filterMinSize,
+        filterMaxSize,
+    ]);
+
     const handleInstanceRef = useCallback((map) => {
         mapRef.current = map;
     }, []);
@@ -237,6 +263,9 @@ export function useShopPageViewModel() {
         ranch,
         allRanches,
         fields,
+        visibleFields,
+        hasMore,
+        showMore,
         countries,
         isLoading,
         isError,

@@ -8,7 +8,9 @@ import { useCart } from '../../components/CartComponent/useCart';
 
 export default function ShopPage() {
     const {
-        fields,
+        visibleFields,
+        hasMore,
+        showMore,
         ranchId,
         allRanches,
         countries,
@@ -236,7 +238,7 @@ export default function ShopPage() {
             >
                 <div className="shop-page__list-wrapper">
                     <ul className="shop-page__list">
-                        {fields.map((field) => {
+                        {visibleFields.map((field) => {
                             const investQuantity = getInvestQuantity(field.id);
                             const reserved = isReserved(field.id);
                             const inCart = investQuantity > 0 || reserved;
@@ -332,6 +334,18 @@ export default function ShopPage() {
                             );
                         })}
                     </ul>
+
+                    {hasMore && (
+                        <div className="shop-page__show-more-wrapper">
+                            <button
+                                type="button"
+                                className="shop-page__show-more"
+                                onClick={showMore}
+                            >
+                                Show more
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {isMapOpen && (
@@ -343,14 +357,14 @@ export default function ShopPage() {
                             }}
                         >
                             <Map
-                                key={fields.map((f) => f.id).join('-')}
+                                key={visibleFields.map((f) => f.id).join('-')}
                                 instanceRef={handleInstanceRef}
                                 defaultState={{ center: [48.5, 10.0], zoom: 3 }}
                                 modules={['util.bounds']}
                                 width="100%"
                                 height="100%"
                             >
-                                {fields.map((field) => (
+                                {visibleFields.map((field) => (
                                     <Placemark
                                         key={field.id}
                                         geometry={[
