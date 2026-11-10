@@ -24,7 +24,7 @@ export default function MainLayout() {
         closeMenu,
         cartWrapperRef,
         userWrapperRef,
-        headerClass
+        headerClass,
     } = useMainLayoutViewModel();
 
     return (
@@ -114,7 +114,7 @@ export default function MainLayout() {
                                                 <div>
                                                     <p className="cart-dropdown__name">{field.name}</p>
                                                     <p className="cart-dropdown__meta">
-                                                        {field.country} · ${field.guidePrice}
+                                                        {field.country} · ${field.guidePrice} × {field.quantity}
                                                     </p>
                                                 </div>
                                                 <button

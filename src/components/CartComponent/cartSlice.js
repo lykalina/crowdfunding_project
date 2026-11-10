@@ -11,9 +11,25 @@ const cartSlice = createSlice({
     reducers: {
         addInvestItem(state, action) {
             const field = action.payload;
-            const exists = state.invest.some((f) => f.id === field.id);
-            if (!exists) {
-                state.invest.push(field);
+            const existing = state.invest.find((f) => f.id === field.id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                state.invest.push({ ...field, quantity: 1 });
+            }
+        },
+        incrementInvestItem(state, action) {
+            const item = state.invest.find((f) => f.id === action.payload);
+            if (item) {
+                item.quantity += 1;
+            }
+        },
+        decrementInvestItem(state, action) {
+            const item = state.invest.find((f) => f.id === action.payload);
+            if (!item) return;
+            item.quantity -= 1;
+            if (item.quantity <= 0) {
+                state.invest = state.invest.filter((f) => f.id !== action.payload);
             }
         },
         addReserveItem(state, action) {
@@ -38,6 +54,8 @@ const cartSlice = createSlice({
 
 export const {
     addInvestItem,
+    incrementInvestItem,
+    decrementInvestItem,
     addReserveItem,
     removeInvestItem,
     removeReserveItem,

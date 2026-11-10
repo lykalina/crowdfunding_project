@@ -31,7 +31,15 @@ export default function ShopPage() {
         handleInstanceRef,
     } = useShopPageViewModel();
 
-    const { addInvest, addReserve } = useCart();
+    const {
+        addInvest,
+        incrementInvest,
+        decrementInvest,
+        addReserve,
+        removeReserve,
+        getInvestQuantity,
+        isReserved,
+    } = useCart();
 
     return (
         <div className="shop-page">
@@ -228,52 +236,101 @@ export default function ShopPage() {
             >
                 <div className="shop-page__list-wrapper">
                     <ul className="shop-page__list">
-                        {fields.map((field) => (
-                            <li
-                                key={field.id}
-                                className={
-                                    isMapOpen && field.id === activeFieldId
-                                        ? 'shop-page__item shop-page__item--active'
-                                        : 'shop-page__item'
-                                }
-                                onClick={() => selectFieldFromList(field)}
-                            >
-                                <div className="shop-page__item-wrapper">
-                                    <img
-                                        src={field.image}
-                                        alt={field.name}
-                                        className="shop-page__item-img"
-                                        loading="lazy"
-                                    />
-                                    <div className="shop-page__item-content">
-                                        <h3>{field.name}</h3>
-                                        <p>{field.country}</p>
-                                        <p>Size: {field.sizeSqm}</p>
-                                        <p>Guide Price: ${field.guidePrice}</p>
-                                        <div className="shop-page__item-controls">
-                                            <button
-                                                className="shop-page__item-controls-invest"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    addInvest(field);
-                                                }}
-                                            >
-                                                Invest
-                                            </button>
-                                            <button
-                                                className="shop-page__item-controls-reserve"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    addReserve(field);
-                                                }}
-                                            >
-                                                Reserve
-                                            </button>
+                        {fields.map((field) => {
+                            const investQuantity = getInvestQuantity(field.id);
+                            const reserved = isReserved(field.id);
+                            const inCart = investQuantity > 0 || reserved;
+
+                            return (
+                                <li
+                                    key={field.id}
+                                    className={[
+                                        'shop-page__item',
+                                        isMapOpen && field.id === activeFieldId
+                                            ? 'shop-page__item--active'
+                                            : '',
+                                        inCart ? 'shop-page__item--in-cart' : '',
+                                    ]
+                                        .filter(Boolean)
+                                        .join(' ')}
+                                    onClick={() => selectFieldFromList(field)}
+                                >
+                                    <div className="shop-page__item-wrapper">
+                                        <img
+                                            src={field.image}
+                                            alt={field.name}
+                                            className="shop-page__item-img"
+                                            loading="lazy"
+                                        />
+                                        <div className="shop-page__item-content">
+                                            <h3>{field.name}</h3>
+                                            <p>{field.country}</p>
+                                            <p>Size: {field.sizeSqm}</p>
+                                            <p>Guide Price: ${field.guidePrice}</p>
+                                            <div className="shop-page__item-controls">
+                                                {investQuantity > 0 ? (
+                                                    <div className="shop-page__item-counter">
+                                                        <button
+                                                            type="button"
+                                                            className="shop-page__item-counter-btn"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                decrementInvest(field.id);
+                                                            }}
+                                                            aria-label="Decrease investment"
+                                                        >
+                                                            −
+                                                        </button>
+                                                        <span className="shop-page__item-counter-value">
+                                                            {investQuantity}
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            className="shop-page__item-counter-btn"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                incrementInvest(field.id);
+                                                            }}
+                                                            aria-label="Increase investment"
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        className="shop-page__item-controls-invest"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            addInvest(field);
+                                                        }}
+                                                    >
+                                                        Invest
+                                                    </button>
+                                                )}
+
+                                                <button
+                                                    className={
+                                                        reserved
+                                                            ? 'shop-page__item-controls-reserve shop-page__item-controls-reserve--active'
+                                                            : 'shop-page__item-controls-reserve'
+                                                    }
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (reserved) {
+                                                            removeReserve(field.id);
+                                                        } else {
+                                                            addReserve(field);
+                                                        }
+                                                    }}
+                                                >
+                                                    {reserved ? 'Reserved' : 'Reserve'}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </li>
-                        ))}
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
 
