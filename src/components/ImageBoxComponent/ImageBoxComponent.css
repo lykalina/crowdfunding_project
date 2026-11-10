@@ -6,6 +6,10 @@
     border-radius: 15px;
 }
 
+.imageBox:hover {
+    box-shadow: 6px 6px 6px 0 rgb(20, 20, 21, 0.4);
+}
+
 .imageBox-image {
     width: 100%;
     height: 377px;
