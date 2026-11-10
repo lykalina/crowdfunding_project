@@ -1,0 +1,65 @@
+.ranch-card {
+    list-style: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.ranch-card:hover {
+    background: var(--bg-secondary);
+}
+
+.ranch-card--active {
+    background: var(--bg-secondary);
+    outline: 2px solid var(--bg-accent);
+    outline-offset: -2px;
+}
+
+.ranch-card__image {
+    height: 400px;
+    width: 100%;
+    object-fit: cover;
+    margin-bottom: 21px;
+    display: block;
+}
+
+.ranch-card__info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ranch-card__name {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--font-active);
+}
+
+.ranch-card__country {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--font-menu);
+}
+
+.ranch-card__button {
+    width: 148px;
+}
+
+@media (max-width: 768px) {
+    .ranch-card__image {
+        height: 220px;
+    }
+
+    .ranch-card__name {
+        font-size: 18px;
+    }
+
+    .ranch-card__country {
+        font-size: 16px;
+    }
+
+    .ranch-card__button {
+        width: auto;
+        font-size: 16px;
+    }
+}

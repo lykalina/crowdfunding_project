@@ -1,13 +1,19 @@
 import './MyPlotsPage.css';
 import { YMaps, Map, Placemark } from '@mr-igorinni/react-yandex-maps-fork';
-import { Link } from 'react-router-dom';
-import SearchIcon from '../../shared/components/icons/SeachIcon';
 import { useRanches } from '../../shared/hooks/useRanches';
 import { useRanchMap } from '../../shared/hooks/useRanchMap';
-import { useLocationSearch } from '../../shared/hooks/useLocationSearch';
+import { useShopPagination } from '../../shared/hooks/useShopPagination';
+import ButtonComponent from '../../shared/components/ButtonComponent/ButtonComponent';
+import RanchCardComponent from '../../shared/components/RanchCardComponent/RanchCardComponent';
+import SearchFieldComponent from '../../shared/components/SearchFieldComponent/SearchFieldComponent';
 
 export default function MyPlotsPage() {
-    const { allRanches, isLoading, isError } = useRanches();
+    const { allRanches } = useRanches();
+
+    const { visibleFields, hasMore, showMore } = useShopPagination({
+        fields: allRanches,
+        resetKey: 'plots',
+    });
 
     const {
         mapRef,
@@ -16,24 +22,6 @@ export default function MyPlotsPage() {
         selectRanchFromList,
         centerOnCoords,
     } = useRanchMap(allRanches);
-
-    const {
-        searchWrapperRef,
-        searchQuery,
-        setSearchQuery,
-        searchResults,
-        isSearching,
-        searchError,
-        isDropdownOpen,
-        setIsDropdownOpen,
-        handleSearch,
-        selectLocation,
-        clearSearch,
-    } = useLocationSearch({
-        onLocationSelect: (location) => {
-            centerOnCoords(location.latitude, location.longitude, 9);
-        },
-    });
 
     return (
         <YMaps
@@ -45,75 +33,11 @@ export default function MyPlotsPage() {
             <div className="plots-page__content">
                 <h2 className="plots-page__title">Locations</h2>
 
-                <div className="plots-page__search">
-                    <div
-                        className="plots-page__search-wrapper"
-                        ref={searchWrapperRef}
-                    >
-                        <div className="plots-page__input">
-                            <SearchIcon />
-
-                            <input
-                                type="text"
-                                placeholder="Search by city, country, village places"
-                                value={searchQuery}
-                                onChange={(e) => {
-                                    setSearchQuery(e.target.value);
-                                    setIsDropdownOpen(false);
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleSearch();
-                                    }
-                                }}
-                                onFocus={() => {
-                                    if (searchResults.length > 0) {
-                                        setIsDropdownOpen(true);
-                                    }
-                                }}
-                            />
-
-                            {searchQuery && (
-                                <button
-                                    type="button"
-                                    className="plots-page__clear"
-                                    onClick={clearSearch}
-                                    aria-label="Clear search"
-                                >
-                                    ×
-                                </button>
-                            )}
-                        </div>
-
-                        {isDropdownOpen && (
-                            <div className="plots-page__dropdown">
-                                {searchResults.map((result) => (
-                                    <button
-                                        type="button"
-                                        className="plots-page__dropdown-item"
-                                        key={result.id}
-                                        onClick={() => selectLocation(result)}
-                                    >
-                                        <span>{result.name}</span>
-                                        <small>{result.description}</small>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    <button
-                        className="plots-page__button plots-page__button--small"
-                        onClick={handleSearch}
-                        disabled={isSearching}
-                    >
-                        {isSearching ? 'Searching...' : 'Search'}
-                    </button>
-                </div>
-
-                {searchError && (
-                    <p>{searchError}</p>
-                )}
+                <SearchFieldComponent
+                    onLocationSelect={(location) => {
+                        centerOnCoords(location.latitude, location.longitude, 9);
+                    }}
+                />
 
                 <div className="plots-page__map-block">
                     <div className="plots-page__map-results">
@@ -123,47 +47,27 @@ export default function MyPlotsPage() {
                             </p>
                         ) : (
                             <ul className="plots-page__results-list">
-                                {allRanches.map((ranch) => (
-                                    <li
-                                        className={
-                                            ranch.id === activeRanchId
-                                                ? 'plots-page__results-item plots-page__results-item--active'
-                                                : 'plots-page__results-item'
-                                        }
+                                {visibleFields.map((ranch) => (
+                                    <RanchCardComponent
                                         key={ranch.id}
-                                        onClick={() => selectRanchFromList(ranch)}
-                                    >
-                                        <img
-                                            className="plots-page__results-image"
-                                            src={ranch.image}
-                                            alt={ranch.name}
-                                            loading="lazy"
-                                        />
-
-                                        <div className="plots-page__results-info">
-                                            <div>
-                                                <p className="plots-page__results-name">
-                                                    {ranch.name}
-                                                </p>
-
-                                                <p className="plots-page__results-country">
-                                                    {ranch.country}
-                                                </p>
-                                            </div>
-                                            <Link
-                                                to={`/shop?ranchId=${ranch.id}`}
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                <button
-                                                    className="plots-page__results-button"
-                                                >
-                                                    Shop
-                                                </button>
-                                            </Link>
-                                        </div>
-                                    </li>
+                                        ranch={ranch}
+                                        isActive={ranch.id === activeRanchId}
+                                        onSelect={() => selectRanchFromList(ranch)}
+                                    />
                                 ))}
                             </ul>
+                        )}
+
+                        {hasMore && (
+                            <div className="plots-page__show-more-wrapper">
+                                <ButtonComponent
+                                    variant="outline"
+                                    className="plots-page__show-more"
+                                    onClick={showMore}
+                                >
+                                    Show more
+                                </ButtonComponent>
+                            </div>
                         )}
                     </div>
 

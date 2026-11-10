@@ -1,7 +1,7 @@
 import './HomePage.css';
 import { useHomePageViewModel } from './useHomePageViewModel';
-import { Link } from "react-router-dom";
-import ImageBoxComponent from "../../shared/components/ImageBoxComponent/ImageBoxComponent";
+import ImageBoxComponent from '../../shared/components/ImageBoxComponent/ImageBoxComponent';
+import ButtonLinkComponent from "../../shared/components/ButtonLinkComponent/ButtonLinkComponent";
 
 export default function HomePage() {
     const {
@@ -15,12 +15,13 @@ export default function HomePage() {
                     Rent your own field, invest in farming, and grow your own vegetables
                 </h2>
 
-                <Link
+                <ButtonLinkComponent
+                    to="/plots"
+                    variant="primary"
                     className="home-page__button"
-                    to='/plots'
                 >
                     Let's start
-                </Link>
+                </ButtonLinkComponent>
 
                 <div className="home-page__cards">
                     {imageBoxesData.map(imageBox =>
