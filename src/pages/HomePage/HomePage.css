@@ -38,33 +38,6 @@
     gap: 35px;
 }
 
-.home-page__card {
-    flex: 1;
-    min-width: 300px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-}
-
-.home-page__card-image {
-    width: 100%;
-    height: 377px;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-}
-
-.home-page__card-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 15px;
-    padding: 15px 8px;
-    background-color: var(--font-secondary);
-    border-radius: 10px;
-    font-size: 24px;
-}
-
 .home-page__search {
     display: flex;
     height: 71px;

@@ -6,6 +6,7 @@ import SearchIcon from '../../components/icons/SeachIcon';
 import { YMaps, Map, Placemark } from '@mr-igorinni/react-yandex-maps-fork';
 import { useHomePageViewModel } from './useHomePageViewModel';
 import { Link } from "react-router-dom";
+import ImageBoxComponent from "../../components/ImageBoxComponent/ImageBoxComponent";
 
 export default function HomePage() {
     const {
@@ -25,6 +26,7 @@ export default function HomePage() {
         ranches,
         handleBoundsChange,
         handleMapLoad,
+        imageBoxesData
     } = useHomePageViewModel();
 
     return (
@@ -42,44 +44,11 @@ export default function HomePage() {
                 </button>
 
                 <div className="home-page__cards">
-                    <div className="home-page__card">
-                        <img
-                            src={img1}
-                            alt="img1"
-                            className="home-page__card-image"
-                            loading="lazy"
-                        />
-
-                        <p className="home-page__card-info">
-                            Rent your own piece of farmland and watch your vegetables grow.
-                        </p>
-                    </div>
-
-                    <div className="home-page__card">
-                        <img
-                            src={img2}
-                            alt="img2"
-                            className="home-page__card-image"
-                            loading="lazy"
-                        />
-
-                        <p className="home-page__card-info">
-                            Enjoy, year after year, the wonders of nature with your rented vegetable farmland (60 sqm / 30 sqm).
-                        </p>
-                    </div>
-
-                    <div className="home-page__card">
-                        <img
-                            src={img3}
-                            alt="img3"
-                            className="home-page__card-image"
-                            loading="lazy"
-                        />
-
-                        <p className="home-page__card-info">
-                            Grow your own piece of land, from planting seeds in the lush soil to harvesting your own vegetables.
-                        </p>
-                    </div>
+                    {imageBoxesData.map(imageBox =>
+                        <ImageBoxComponent
+                            key={imageBox.id}
+                            imageInfo={imageBox}
+                        />)}
                 </div>
             </div>
 

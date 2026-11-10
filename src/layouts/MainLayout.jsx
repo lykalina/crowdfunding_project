@@ -24,11 +24,12 @@ export default function MainLayout() {
         closeMenu,
         cartWrapperRef,
         userWrapperRef,
+        headerClass
     } = useMainLayoutViewModel();
 
     return (
         <div className="mainLayout">
-            <header className="header">
+            <header className={headerClass}>
                 <button
                     type="button"
                     className="burger"

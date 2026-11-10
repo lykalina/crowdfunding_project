@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../components/CartComponent/useCart';
 import { useGetCurrentUserQuery } from '../services/userApi';
+import {useLocation} from "react-router-dom";
 
 export function useMainLayoutViewModel() {
     const {
@@ -45,6 +46,13 @@ export function useMainLayoutViewModel() {
         };
     }, []);
 
+    const { pathname } = useLocation();
+    const headerClass =
+        pathname === '/' ? 'header header--hero' :
+            pathname.startsWith('/shop') ? 'header header--shop' :
+                pathname.startsWith('/plots') ? 'header header--plots' :
+                    'header';
+
     const toggleCart = () => setIsCartOpen((prev) => !prev);
     const toggleMenu = () => setIsMenuOpen((prev) => !prev);
     const toggleUser = () => setIsUserOpen((prev) => !prev);
@@ -69,5 +77,6 @@ export function useMainLayoutViewModel() {
         closeMenu,
         cartWrapperRef,
         userWrapperRef,
+        headerClass
     };
 }
