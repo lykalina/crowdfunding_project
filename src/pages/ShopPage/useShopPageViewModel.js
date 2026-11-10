@@ -20,9 +20,12 @@ export function useShopPageViewModel() {
 
     const allRanches = data?.ranches ?? [];
 
+    const mapRef = useRef(null);
+
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isMapOpen, setIsMapOpen] = useState(false);
+    const [activeFieldId, setActiveFieldId] = useState(null);
     const sortWrapperRef = useRef(null);
     const filterWrapperRef = useRef(null);
 
@@ -199,6 +202,36 @@ export function useShopPageViewModel() {
         return allRanches.find((r) => r.id === Number(ranchId)) ?? null;
     }, [allRanches, ranchId]);
 
+    const handleInstanceRef = useCallback((map) => {
+        mapRef.current = map;
+    }, []);
+
+    const selectFieldFromList = useCallback((field) => {
+        if (!isMapOpen) return;
+
+        setActiveFieldId(field.id);
+
+        if (mapRef.current) {
+            mapRef.current.setCenter(
+                [field.coordinates.lat, field.coordinates.lng],
+                12,
+                { duration: 500 }
+            );
+        }
+    }, [isMapOpen]);
+
+    useEffect(() => {
+        if (!isMapOpen) {
+            setActiveFieldId(null);
+        }
+    }, [isMapOpen]);
+
+    useEffect(() => {
+        if (!fields.some((f) => f.id === activeFieldId)) {
+            setActiveFieldId(null);
+        }
+    }, [fields, activeFieldId]);
+
     return {
         ranchId,
         ranch,
@@ -223,5 +256,8 @@ export function useShopPageViewModel() {
         hasActiveFilters,
         isMapOpen,
         toggleMap,
+        activeFieldId,
+        selectFieldFromList,
+        handleInstanceRef,
     };
 }

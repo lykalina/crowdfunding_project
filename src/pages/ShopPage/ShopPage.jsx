@@ -26,6 +26,9 @@ export default function ShopPage() {
         resetFilters,
         isMapOpen,
         toggleMap,
+        activeFieldId,
+        selectFieldFromList,
+        handleInstanceRef,
     } = useShopPageViewModel();
 
     const { addInvest, addReserve } = useCart();
@@ -223,40 +226,56 @@ export default function ShopPage() {
                         : 'shop-page__content'
                 }
             >
-                <ul className="shop-page__list">
-                    {fields.map((field) => (
-                        <li key={field.id} className="shop-page__item">
-                            <div className="shop-page__item-wrapper">
-                                <img
-                                    src={field.image}
-                                    alt={field.name}
-                                    className="shop-page__item-img"
-                                    loading="lazy"
-                                />
-                                <div className="shop-page__item-content">
-                                    <h3>{field.name}</h3>
-                                    <p>{field.country}</p>
-                                    <p>Size: {field.sizeSqm}</p>
-                                    <p>Guide Price: ${field.guidePrice}</p>
-                                    <div className="shop-page__item-controls">
-                                        <button
-                                            className="shop-page__item-controls-invest"
-                                            onClick={() => addInvest(field)}
-                                        >
-                                            Invest
-                                        </button>
-                                        <button
-                                            className="shop-page__item-controls-reserve"
-                                            onClick={() => addReserve(field)}
-                                        >
-                                            Reserve
-                                        </button>
+                <div className="shop-page__list-wrapper">
+                    <ul className="shop-page__list">
+                        {fields.map((field) => (
+                            <li
+                                key={field.id}
+                                className={
+                                    isMapOpen && field.id === activeFieldId
+                                        ? 'shop-page__item shop-page__item--active'
+                                        : 'shop-page__item'
+                                }
+                                onClick={() => selectFieldFromList(field)}
+                            >
+                                <div className="shop-page__item-wrapper">
+                                    <img
+                                        src={field.image}
+                                        alt={field.name}
+                                        className="shop-page__item-img"
+                                        loading="lazy"
+                                    />
+                                    <div className="shop-page__item-content">
+                                        <h3>{field.name}</h3>
+                                        <p>{field.country}</p>
+                                        <p>Size: {field.sizeSqm}</p>
+                                        <p>Guide Price: ${field.guidePrice}</p>
+                                        <div className="shop-page__item-controls">
+                                            <button
+                                                className="shop-page__item-controls-invest"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    addInvest(field);
+                                                }}
+                                            >
+                                                Invest
+                                            </button>
+                                            <button
+                                                className="shop-page__item-controls-reserve"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    addReserve(field);
+                                                }}
+                                            >
+                                                Reserve
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
                 {isMapOpen && (
                     <div className="shop-page__map">
@@ -268,6 +287,7 @@ export default function ShopPage() {
                         >
                             <Map
                                 key={fields.map((f) => f.id).join('-')}
+                                instanceRef={handleInstanceRef}
                                 defaultState={{ center: [48.5, 10.0], zoom: 3 }}
                                 modules={['util.bounds']}
                                 width="100%"
@@ -282,6 +302,12 @@ export default function ShopPage() {
                                         ]}
                                         properties={{
                                             iconCaption: field.name,
+                                        }}
+                                        options={{
+                                            preset:
+                                                field.id === activeFieldId
+                                                    ? 'islands#redIcon'
+                                                    : 'islands#greenIcon',
                                         }}
                                     />
                                 ))}
