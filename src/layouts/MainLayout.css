@@ -11,6 +11,17 @@
     height: 115px;
     padding: 0 100px;
     box-sizing: border-box;
+    box-shadow: 0 0 6px 6px rgb(20, 20, 21, 0.2);
+    background-color: var(--bg-primary);
+}
+
+.header--hero {
+    background-color: var(--bg-secondary);
+}
+
+.header--shop,
+.header-plots {
+    background-color: var(--bg-primary);
 }
 
 .nav {
@@ -48,24 +59,16 @@
 
 .burger {
     display: none;
-    flex-direction: column;
     justify-content: center;
-    gap: 5px;
     width: 40px;
     height: 40px;
     padding: 0;
     background: none;
     border: none;
     cursor: pointer;
+    color: var(--font-active);
 }
 
-.burger__line {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: var(--font-active);
-    border-radius: 2px;
-}
 
 .cart-wrapper {
     position: relative;
@@ -177,10 +180,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
     color: var(--font-menu);
-    padding: 0 4px;
 }
 
 .cart-dropdown__remove:hover {

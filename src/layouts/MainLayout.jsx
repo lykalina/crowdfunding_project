@@ -1,8 +1,16 @@
 import './MainLayout.css';
-import { Outlet, NavLink } from 'react-router-dom';
-import CartIcon from '../components/icons/CartIcon';
-import ArrowIcon from '../components/icons/ArrowIcon';
-import { useMainLayoutViewModel } from './useMainLayoutViewModel';
+import { Outlet } from 'react-router-dom';
+import CartIcon from '../shared/components/icons/CartIcon';
+import ArrowIcon from '../shared/components/icons/ArrowIcon';
+import BurgerIcon from '../shared/components/icons/BurgerIcon';
+import CloseIcon from '../shared/components/icons/CloseIcon';
+import { useCartState } from '../shared/hooks/useCartState';
+import { useCurrentUser } from '../shared/hooks/useCurrentUser';
+import { useDropdown } from '../shared/hooks/useDropdown';
+import { useMenuState } from '../shared/hooks/useMenuState';
+import { useHeaderClass } from '../shared/hooks/useHeaderClass';
+import TabComponent from "../shared/components/TabComponent/TabComponent";
+import { NAV_ITEMS } from './navItems';
 
 export default function MainLayout() {
     const {
@@ -14,21 +22,29 @@ export default function MainLayout() {
         investTotal,
         reserveTotal,
         totalPrice,
-        user,
-        isCartOpen,
-        isMenuOpen,
-        isUserOpen,
-        toggleCart,
-        toggleMenu,
-        toggleUser,
-        closeMenu,
-        cartWrapperRef,
-        userWrapperRef,
-    } = useMainLayoutViewModel();
+    } = useCartState();
+
+    const { user } = useCurrentUser();
+
+    const {
+        isOpen: isCartOpen,
+        toggle: toggleCart,
+        wrapperRef: cartWrapperRef,
+    } = useDropdown();
+
+    const {
+        isOpen: isUserOpen,
+        toggle: toggleUser,
+        wrapperRef: userWrapperRef,
+    } = useDropdown();
+
+    const { isMenuOpen, toggleMenu, closeMenu } = useMenuState();
+
+    const headerClass = useHeaderClass();
 
     return (
         <div className="mainLayout">
-            <header className="header">
+            <header className={headerClass}>
                 <button
                     type="button"
                     className="burger"
@@ -36,52 +52,20 @@ export default function MainLayout() {
                     aria-label="Menu"
                     aria-expanded={isMenuOpen}
                 >
-                    <span className="burger__line" />
-                    <span className="burger__line" />
-                    <span className="burger__line" />
+                    <BurgerIcon />
                 </button>
 
                 <nav className={isMenuOpen ? 'nav nav--open' : 'nav'}>
-                    <NavLink
-                        to="/"
-                        end
-                        onClick={closeMenu}
-                        className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-                    >
-                        Home
-                    </NavLink>
-
-                    <NavLink
-                        to="/plots"
-                        onClick={closeMenu}
-                        className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-                    >
-                        My plots
-                    </NavLink>
-
-                    <NavLink
-                        to="/contracts"
-                        onClick={closeMenu}
-                        className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-                    >
-                        Contracts
-                    </NavLink>
-
-                    <NavLink
-                        to="/shop"
-                        onClick={closeMenu}
-                        className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-                    >
-                        Shop
-                    </NavLink>
-
-                    <NavLink
-                        to="/wallet"
-                        onClick={closeMenu}
-                        className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-                    >
-                        Wallet
-                    </NavLink>
+                    {NAV_ITEMS.map((item) => (
+                        <TabComponent
+                            key={item.to}
+                            to={item.to}
+                            end={item.end}
+                            onClick={closeMenu}
+                        >
+                            {item.label}
+                        </TabComponent>
+                    ))}
                 </nav>
 
                 <div className="cart-wrapper" ref={cartWrapperRef}>
@@ -113,7 +97,7 @@ export default function MainLayout() {
                                                 <div>
                                                     <p className="cart-dropdown__name">{field.name}</p>
                                                     <p className="cart-dropdown__meta">
-                                                        {field.country} · ${field.guidePrice}
+                                                        {field.country} · ${field.guidePrice} × {field.quantity}
                                                     </p>
                                                 </div>
                                                 <button
@@ -122,7 +106,7 @@ export default function MainLayout() {
                                                     onClick={() => removeInvest(field.id)}
                                                     aria-label="Remove"
                                                 >
-                                                    ×
+                                                    <CloseIcon size={18} />
                                                 </button>
                                             </li>
                                         ))}
@@ -155,7 +139,7 @@ export default function MainLayout() {
                                                     onClick={() => removeReserve(field.id)}
                                                     aria-label="Remove"
                                                 >
-                                                    ×
+                                                    <CloseIcon size={18} />
                                                 </button>
                                             </li>
                                         ))}

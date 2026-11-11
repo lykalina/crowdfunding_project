@@ -1,34 +1,68 @@
-import { useShopPageViewModel } from './useShopPageViewModel';
 import './ShopPage.css';
-import ArrowIcon from '../../components/icons/ArrowIcon';
-import FilterIcon from '../../components/icons/FilterIcon';
-import MapIcon from '../../components/icons/MapIcon';
+import MapIcon from '../../shared/components/icons/MapIcon';
 import { YMaps, Map, Placemark } from '@mr-igorinni/react-yandex-maps-fork';
-import { useCart } from '../../components/CartComponent/useCart';
+import { useCart } from '../../shared/slices/useCart';
+import { useShopData } from '../../shared/hooks/useShopData';
+import { useShopFilters } from '../../shared/hooks/useShopFilters';
+import { useShopFields } from '../../shared/hooks/useShopFields';
+import { useShopPagination } from '../../shared/hooks/useShopPagination';
+import { useShopMap } from '../../shared/hooks/useShopMap';
+import ButtonComponent from '../../shared/components/ButtonComponent/ButtonComponent';
+import SortDropdownComponent from "../../shared/components/SortDropdownComponent/SortDropdownComponent";
+import FilterDropdownComponent from "../../shared/components/FilterDropdownComponent/FilterDropdownComponent";
+import FieldCardComponent from "../../shared/components/FieldCardComponent/FieldCardComponent";
 
 export default function ShopPage() {
+    const { allRanches } = useShopData();
+
     const {
-        fields,
         ranchId,
-        allRanches,
-        countries,
-        sortFilter,
-        isSortOpen,
-        toggleSort,
-        selectRanch,
-        sortWrapperRef,
-        isFilterOpen,
-        toggleFilter,
-        filterWrapperRef,
+        filterCountry,
+        filterMinPrice,
+        filterMaxPrice,
+        filterMinSize,
+        filterMaxSize,
         draftFilters,
         setDraftFilter,
         applyFilters,
         resetFilters,
+        selectRanch,
+    } = useShopFilters();
+
+    const { fields, countries, ranch } = useShopFields({
+        allRanches,
+        ranchId,
+        filterCountry,
+        filterMinPrice,
+        filterMaxPrice,
+        filterMinSize,
+        filterMaxSize,
+    });
+
+    const resetKey = `${ranchId ?? ''}-${filterCountry}-${filterMinPrice}-${filterMaxPrice}-${filterMinSize}-${filterMaxSize}`;
+
+    const { visibleFields, hasMore, showMore } = useShopPagination({
+        fields,
+        resetKey,
+    });
+
+    const {
         isMapOpen,
         toggleMap,
-    } = useShopPageViewModel();
+        activeFieldId,
+        selectFieldFromList,
+        handleInstanceRef,
+    } = useShopMap({ fields });
 
-    const { addInvest, addReserve } = useCart();
+    const {
+        addInvest,
+        incrementInvest,
+        decrementInvest,
+        addReserve,
+        removeReserve,
+        getInvestQuantity,
+        isReserved,
+    } = useCart();
 
     return (
         <div className="shop-page">
@@ -38,181 +72,31 @@ export default function ShopPage() {
 
             <div className="shop-page__filters">
                 <div className="shop-page__filters-controls">
-                    <div
-                        className="shop-page__filters-sort-wrapper"
-                        ref={sortWrapperRef}
-                    >
-                        <button
-                            type="button"
-                            className="shop-page__filters-sort"
-                            onClick={toggleSort}
-                            aria-expanded={isSortOpen}
-                        >
-                            <p>
-                                Sort by <span>{sortFilter}</span>
-                            </p>
-                            <ArrowIcon
-                                className={
-                                    isSortOpen
-                                        ? 'shop-page__filters-arrow shop-page__filters-arrow--open'
-                                        : 'shop-page__filters-arrow'
-                                }
-                            />
-                        </button>
+                    <SortDropdownComponent
+                        allRanches={allRanches}
+                        ranchId={ranchId}
+                        sortLabel={ranch?.name ?? 'All'}
+                        onSelectRanch={selectRanch}
+                    />
 
-                        {isSortOpen && (
-                            <div className="shop-page__dropdown">
-                                <button
-                                    type="button"
-                                    className={
-                                        !ranchId
-                                            ? 'shop-page__dropdown-item shop-page__dropdown-item--active'
-                                            : 'shop-page__dropdown-item'
-                                    }
-                                    onClick={() => selectRanch(null)}
-                                >
-                                    <span>All</span>
-                                    <small>All ranches</small>
-                                </button>
+                    <FilterDropdownComponent
+                        countries={countries}
+                        draftFilters={draftFilters}
+                        setDraftFilter={setDraftFilter}
+                        onApply={applyFilters}
+                        onReset={resetFilters}
+                    />
 
-                                {allRanches.map((r) => (
-                                    <button
-                                        key={r.id}
-                                        type="button"
-                                        className={
-                                            Number(ranchId) === r.id
-                                                ? 'shop-page__dropdown-item shop-page__dropdown-item--active'
-                                                : 'shop-page__dropdown-item'
-                                        }
-                                        onClick={() => selectRanch(r.id)}
-                                    >
-                                        <span>{r.name}</span>
-                                        <small>{r.country}</small>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    <div
-                        className="shop-page__filters-filter-wrapper"
-                        ref={filterWrapperRef}
-                    >
-                        <button
-                            type="button"
-                            className="shop-page__filters-filter"
-                            onClick={toggleFilter}
-                            aria-expanded={isFilterOpen}
-                        >
-                            Filter
-                            <FilterIcon />
-                        </button>
-
-                        {isFilterOpen && (
-                            <div className="shop-page__filter-dropdown">
-                                <div className="shop-page__filter-group">
-                                    <label className="shop-page__filter-label">
-                                        Country
-                                    </label>
-                                    <select
-                                        className="shop-page__filter-select"
-                                        value={draftFilters.country}
-                                        onChange={(e) =>
-                                            setDraftFilter('country', e.target.value)
-                                        }
-                                    >
-                                        <option value="">All countries</option>
-                                        {countries.map((c) => (
-                                            <option key={c} value={c}>
-                                                {c}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="shop-page__filter-group">
-                                    <label className="shop-page__filter-label">
-                                        Price
-                                    </label>
-                                    <div className="shop-page__filter-range">
-                                        <input
-                                            type="number"
-                                            className="shop-page__filter-input"
-                                            placeholder="Min"
-                                            value={draftFilters.minPrice}
-                                            onChange={(e) =>
-                                                setDraftFilter('minPrice', e.target.value)
-                                            }
-                                        />
-                                        <span>—</span>
-                                        <input
-                                            type="number"
-                                            className="shop-page__filter-input"
-                                            placeholder="Max"
-                                            value={draftFilters.maxPrice}
-                                            onChange={(e) =>
-                                                setDraftFilter('maxPrice', e.target.value)
-                                            }
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="shop-page__filter-group">
-                                    <label className="shop-page__filter-label">
-                                        Size (sqm)
-                                    </label>
-                                    <div className="shop-page__filter-range">
-                                        <input
-                                            type="number"
-                                            className="shop-page__filter-input"
-                                            placeholder="Min"
-                                            value={draftFilters.minSize}
-                                            onChange={(e) =>
-                                                setDraftFilter('minSize', e.target.value)
-                                            }
-                                        />
-                                        <span>—</span>
-                                        <input
-                                            type="number"
-                                            className="shop-page__filter-input"
-                                            placeholder="Max"
-                                            value={draftFilters.maxSize}
-                                            onChange={(e) =>
-                                                setDraftFilter('maxSize', e.target.value)
-                                            }
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="shop-page__filter-actions">
-                                    <button
-                                        type="button"
-                                        className="shop-page__filter-apply"
-                                        onClick={applyFilters}
-                                    >
-                                        Show
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="shop-page__filter-reset"
-                                        onClick={resetFilters}
-                                    >
-                                        Reset
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    <button
-                        type="button"
+                    <ButtonComponent
+                        variant="primary"
+                        size="small"
                         className="shop-page__filters-map"
                         onClick={toggleMap}
                         aria-expanded={isMapOpen}
                     >
                         <MapIcon />
                         Map
-                    </button>
+                    </ButtonComponent>
                 </div>
             </div>
 
@@ -223,40 +107,38 @@ export default function ShopPage() {
                         : 'shop-page__content'
                 }
             >
-                <ul className="shop-page__list">
-                    {fields.map((field) => (
-                        <li key={field.id} className="shop-page__item">
-                            <div className="shop-page__item-wrapper">
-                                <img
-                                    src={field.image}
-                                    alt={field.name}
-                                    className="shop-page__item-img"
-                                    loading="lazy"
-                                />
-                                <div className="shop-page__item-content">
-                                    <h3>{field.name}</h3>
-                                    <p>{field.country}</p>
-                                    <p>Size: {field.sizeSqm}</p>
-                                    <p>Guide Price: ${field.guidePrice}</p>
-                                    <div className="shop-page__item-controls">
-                                        <button
-                                            className="shop-page__item-controls-invest"
-                                            onClick={() => addInvest(field)}
-                                        >
-                                            Invest
-                                        </button>
-                                        <button
-                                            className="shop-page__item-controls-reserve"
-                                            onClick={() => addReserve(field)}
-                                        >
-                                            Reserve
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                <div className="shop-page__list-wrapper">
+                    <ul className="shop-page__list">
+                        {visibleFields.map((field) => (
+                            <FieldCardComponent
+                                key={field.id}
+                                field={field}
+                                isActive={field.id === activeFieldId}
+                                isMapOpen={isMapOpen}
+                                investQuantity={getInvestQuantity(field.id)}
+                                reserved={isReserved(field.id)}
+                                onSelect={() => selectFieldFromList(field)}
+                                onAddInvest={() => addInvest(field)}
+                                onIncrementInvest={() => incrementInvest(field.id)}
+                                onDecrementInvest={() => decrementInvest(field.id)}
+                                onAddReserve={() => addReserve(field)}
+                                onRemoveReserve={() => removeReserve(field.id)}
+                            />
+                        ))}
+                    </ul>
+
+                    {hasMore && (
+                        <div className="shop-page__show-more-wrapper">
+                            <ButtonComponent
+                                variant="outline"
+                                className="shop-page__show-more"
+                                onClick={showMore}
+                            >
+                                Show more
+                            </ButtonComponent>
+                        </div>
+                    )}
+                </div>
 
                 {isMapOpen && (
                     <div className="shop-page__map">
@@ -267,13 +149,14 @@ export default function ShopPage() {
                             }}
                         >
                             <Map
-                                key={fields.map((f) => f.id).join('-')}
+                                key={visibleFields.map((f) => f.id).join('-')}
+                                instanceRef={handleInstanceRef}
                                 defaultState={{ center: [48.5, 10.0], zoom: 3 }}
                                 modules={['util.bounds']}
                                 width="100%"
                                 height="100%"
                             >
-                                {fields.map((field) => (
+                                {visibleFields.map((field) => (
                                     <Placemark
                                         key={field.id}
                                         geometry={[
@@ -282,6 +165,12 @@ export default function ShopPage() {
                                         ]}
                                         properties={{
                                             iconCaption: field.name,
+                                        }}
+                                        options={{
+                                            preset:
+                                                field.id === activeFieldId
+                                                    ? 'islands#redIcon'
+                                                    : 'islands#greenIcon',
                                         }}
                                     />
                                 ))}

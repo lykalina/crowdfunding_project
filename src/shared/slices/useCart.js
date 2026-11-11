@@ -2,6 +2,8 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     addInvestItem,
+    incrementInvestItem,
+    decrementInvestItem,
     addReserveItem,
     removeInvestItem,
     removeReserveItem,
@@ -16,6 +18,16 @@ export function useCart() {
 
     const addInvest = useCallback(
         (field) => dispatch(addInvestItem(field)),
+        [dispatch]
+    );
+
+    const incrementInvest = useCallback(
+        (id) => dispatch(incrementInvestItem(id)),
+        [dispatch]
+    );
+
+    const decrementInvest = useCallback(
+        (id) => dispatch(decrementInvestItem(id)),
         [dispatch]
     );
 
@@ -36,10 +48,18 @@ export function useCart() {
 
     const clear = useCallback(() => dispatch(clearCart()), [dispatch]);
 
-    const totalCount = invest.length + reserve.length;
+    const totalCount = useMemo(
+        () =>
+            invest.reduce((sum, f) => sum + f.quantity, 0) + reserve.length,
+        [invest, reserve]
+    );
 
     const investTotal = useMemo(
-        () => invest.reduce((sum, f) => sum + (f.guidePrice ?? 0), 0),
+        () =>
+            invest.reduce(
+                (sum, f) => sum + (f.guidePrice ?? 0) * f.quantity,
+                0
+            ),
         [invest]
     );
 
@@ -50,10 +70,25 @@ export function useCart() {
 
     const totalPrice = investTotal + reserveTotal;
 
+    const getInvestQuantity = useCallback(
+        (id) => {
+            const item = invest.find((f) => f.id === id);
+            return item?.quantity ?? 0;
+        },
+        [invest]
+    );
+
+    const isReserved = useCallback(
+        (id) => reserve.some((f) => f.id === id),
+        [reserve]
+    );
+
     return {
         invest,
         reserve,
         addInvest,
+        incrementInvest,
+        decrementInvest,
         addReserve,
         removeInvest,
         removeReserve,
@@ -62,5 +97,7 @@ export function useCart() {
         investTotal,
         reserveTotal,
         totalPrice,
+        getInvestQuantity,
+        isReserved,
     };
 }
