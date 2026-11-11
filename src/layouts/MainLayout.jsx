@@ -1,5 +1,5 @@
 import './MainLayout.css';
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import CartIcon from '../shared/components/icons/CartIcon';
 import ArrowIcon from '../shared/components/icons/ArrowIcon';
 import BurgerIcon from '../shared/components/icons/BurgerIcon';
@@ -10,6 +10,7 @@ import { useDropdown } from '../shared/hooks/useDropdown';
 import { useMenuState } from '../shared/hooks/useMenuState';
 import { useHeaderClass } from '../shared/hooks/useHeaderClass';
 import TabComponent from "../shared/components/TabComponent/TabComponent";
+import { NAV_ITEMS } from './navItems';
 
 export default function MainLayout() {
     const {
@@ -55,23 +56,16 @@ export default function MainLayout() {
                 </button>
 
                 <nav className={isMenuOpen ? 'nav nav--open' : 'nav'}>
-                    <nav className={isMenuOpen ? 'nav nav--open' : 'nav'}>
-                        <TabComponent to="/" end onClick={closeMenu}>
-                            Home
+                    {NAV_ITEMS.map((item) => (
+                        <TabComponent
+                            key={item.to}
+                            to={item.to}
+                            end={item.end}
+                            onClick={closeMenu}
+                        >
+                            {item.label}
                         </TabComponent>
-                        <TabComponent to="/plots" onClick={closeMenu}>
-                            My plots
-                        </TabComponent>
-                        <TabComponent to="/contracts" onClick={closeMenu}>
-                            Contracts
-                        </TabComponent>
-                        <TabComponent to="/shop" onClick={closeMenu}>
-                            Shop
-                        </TabComponent>
-                        <TabComponent to="/wallet" onClick={closeMenu}>
-                            Wallet
-                        </TabComponent>
-                    </nav>
+                    ))}
                 </nav>
 
                 <div className="cart-wrapper" ref={cartWrapperRef}>
